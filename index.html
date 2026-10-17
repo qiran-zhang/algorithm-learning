@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark-theme">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>第十六届蓝桥杯官方大纲全景算法交互可视化系统 & 阶梯任务看板</title>
+  <!-- 本地原生 CSS 样式表，零外部 CDN 依赖 -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app" class="app-container">
+
+    <!-- ======================================================== -->
+    <!-- 顶部综合导航条 (Top Navigation Bar)                     -->
+    <!-- ======================================================== -->
+    <header class="top-navbar" id="topNavbar">
+      <div class="navbar-brand">
+        <!-- 现代极简左侧栏折叠/展开按钮 (VS Code / Notion 风格) -->
+        <button id="btnToggleLeftSidebar" class="btn-sidebar-toggle active" title="显示/隐藏左侧导航栏 (快捷键: Ctrl+B)" aria-label="切换左侧栏">
+          <svg class="icon-sidebar-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+            <rect class="sidebar-fill-pane" x="3" y="3" width="6" height="18" rx="2" fill="currentColor"></rect>
+          </svg>
+        </button>
+        <svg class="brand-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 18 22 12 16 6"></polyline>
+          <polyline points="8 6 2 12 8 18"></polyline>
+          <line x1="12" y1="2" x2="12" y2="22"></line>
+        </svg>
+        <h1 class="brand-title">第十六届蓝桥杯全景算法交互可视化系统</h1>
+        <span class="badge-version">v1.0 Zero-CORS</span>
+      </div>
+
+      <!-- 核心视图切换选项卡 -->
+      <nav class="navbar-tabs" id="viewTabs" role="tablist">
+        <button class="nav-tab active" id="tabVisualizer" data-view="visualizer" role="tab" aria-selected="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          可视化实验室
+        </button>
+        <button class="nav-tab" id="tabDashboard" data-view="dashboard" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          88阶梯任务看板
+        </button>
+        <button class="nav-tab" id="tabKnowledge" data-view="knowledge" role="tab" aria-selected="false">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          五维深度知识库
+        </button>
+      </nav>
+
+      <!-- 顶部操作区 -->
+      <div class="navbar-actions">
+        <button id="btnThemeToggle" class="btn-theme-toggle" title="快速循环切换风格（暗黑 / 赛博蓝 / 考场白 / 羊皮纸暖光）">
+          🎨 <span id="themeName">暗黑</span>
+        </button>
+        <button id="btnOpenThemeModal" class="btn-theme-toggle" title="查看 4 大界面调色盘详情与样照配色方案 (Theme Studio)">
+          ⚙️ 调色盘
+        </button>
+        <button id="openCalculatorBtn" class="btn-calc" title="输入数据规模 N 秒推推荐算法">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>⚡ N秒推候选算法</span>
+        </button>
+        <button class="global-stats-badge clickable" id="globalProgressBtn" title="点击直达 88 项阶梯刷题打卡看板">
+          🎯 打卡: <span id="progressText">0 / 88</span> (<span id="progressPercent">0%</span>)
+        </button>
+        <!-- 现代极简右侧面板折叠/展开按钮 (VS Code / Notion 风格) -->
+        <button id="btnToggleRightInspector" class="btn-sidebar-toggle active" title="显示/隐藏右侧代码与联调面板 (快捷键: Ctrl+I)" aria-label="切换右侧面板">
+          <svg class="icon-sidebar-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+            <line x1="15" y1="3" x2="15" y2="21"></line>
+            <rect class="sidebar-fill-pane" x="15" y="3" width="6" height="18" rx="2" fill="currentColor"></rect>
+          </svg>
+        </button>
+        <button id="sidebarToggleBtn" class="btn-icon-mobile" aria-label="切换侧边栏菜单">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- 主界面布局容器 (Main Three-Column Layout)                -->
+    <!-- ======================================================== -->
+    <div class="main-layout" id="mainLayout">
+
+      <!-- ====================================================== -->
+      <!-- 左侧 22 考点手风琴导航抽屉 (Left Sidebar Drawer)          -->
+      <!-- ====================================================== -->
+      <aside class="sidebar" id="sidebarDrawer">
+        <div class="sidebar-header">
+          <!-- 实时拼音/中文算法搜索过滤 -->
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="topicSearchInput" placeholder="搜索算法 (如 erfen/快排/LIS)..." autocomplete="off">
+            <button id="clearSearchBtn" class="btn-clear hidden" aria-label="清空搜索">✕</button>
+          </div>
+          <!-- 蓝桥杯组别与考研过滤器 Chips -->
+          <div class="filter-chips" id="groupFilterChips">
+            <button class="chip active" data-filter="all">全部</button>
+            <button class="chip" data-filter="c">大学C组</button>
+            <button class="chip" data-filter="b">大学B组</button>
+            <button class="chip" data-filter="a">大学A组</button>
+            <button class="chip" data-filter="408">408重合</button>
+          </div>
+        </div>
+
+        <!-- 22 门类折叠手风琴树状容器 -->
+        <div class="topic-accordion" id="topicAccordion">
+          <!-- 动态由 navigation.js 填充 35 算法 -->
+        </div>
+
+        <footer class="sidebar-footer">
+          <button id="resetAllProgressBtn" class="btn-text-danger" title="清空本地所有做题打卡进度">重置本地打卡进度</button>
+          <div class="footer-meta">100% 离线免配置 · file:// 直跑</div>
+        </footer>
+      </aside>
+
+      <!-- 全局侧边栏自由拖拽分隔条 (红框1: 支持 180px~420px 拖拽与双击一键折叠) -->
+      <div class="pane-resizer" id="resizerSidebar" title="左右拖拽调节侧边栏宽度（双击一键折叠/展开）">
+        <button type="button" class="resizer-collapse-btn" id="btnCollapseSidebar" title="折叠/展开左侧栏 (Ctrl+B)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+            <line x1="9" y1="3" x2="9" y2="21"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 中央工作区舞台 (Central Workbench Area)                  -->
+      <!-- ====================================================== -->
+      <main class="workbench" id="workbenchArea">
+
+        <!-- ==================================================== -->
+        <!-- 视图 1: 算法可视化主舞台 (Visualizer Lab View)        -->
+        <!-- ==================================================== -->
+        <section class="view-panel active" id="viewVisualizer" role="tabpanel" aria-labelledby="tabVisualizer">
+          <!-- 算法标题与考点面包屑 -->
+          <div class="workbench-header">
+            <div class="header-breadcrumb">
+              <span class="category-badge" id="algoCategoryBadge">基础算法与经典排序</span>
+              <span class="breadcrumb-separator">/</span>
+              <h2 class="algo-title" id="algoTitle">冒泡排序 (Bubble Sort)</h2>
+              <span class="badge-tag" id="algoGroupBadge">大学C组 必考</span>
+              <span class="badge-tag tag-408" id="algo408Badge">408 核心</span>
+            </div>
+            <div class="header-complexity">
+              <span class="label">时间复杂度:</span>
+              <code class="val" id="algoTimeComplexity">O(N²)</code>
+              <span class="label">空间:</span>
+              <code class="val" id="algoSpaceComplexity">O(1)</code>
+              <span class="label">稳定性:</span>
+              <span class="val-stability" id="algoStability">稳定</span>
+            </div>
+          </div>
+
+          <!-- 交互控制工具栏 (Control Toolbar) -->
+          <div class="control-toolbar" id="controlToolbar">
+            <!-- 数据输入与预设 -->
+            <div class="toolbar-group data-group">
+              <label for="presetSelect" class="toolbar-label">数据预设:</label>
+              <select id="presetSelect" class="form-select">
+                <option value="random">随机分布 (Random)</option>
+                <option value="reversed">完全倒序 (Worst Case)</option>
+                <option value="nearly_sorted">近乎有序 (Nearly Sorted)</option>
+                <option value="few_unique">大量重复 (Duplicates)</option>
+                <option value="minimal">极小规模 (5项)</option>
+              </select>
+
+              <div class="custom-input-box">
+                <input type="text" id="customInput" class="form-input" placeholder="输入数组 (逗号隔开，如: 45, 12, 85, 32, 89)" autocomplete="off">
+                <button id="btnApplyInput" class="btn btn-secondary">应用数据</button>
+                <button id="btnRandomInput" class="btn btn-secondary" title="随机生成一组新数据">🎲 随机</button>
+              </div>
+            </div>
+
+            <!-- 时间旅行与播放控制 -->
+            <div class="toolbar-group playback-group">
+              <button id="btnReset" class="btn-ctrl" title="复位至第 0 帧 (快捷键: R)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
+              </button>
+              <button id="btnStepPrev" class="btn-ctrl" title="单步后退 (快捷键: ← 或 J)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="19 20 7 12 19 4 19 20"></polygon></svg>
+              </button>
+              <button id="btnPlayPause" class="btn-ctrl btn-play" title="播放 / 暂停 (快捷键: 空格 Space)">
+                <svg id="iconPlay" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <svg id="iconPause" class="hidden" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              </button>
+              <button id="btnStepNext" class="btn-ctrl" title="单步前进 (快捷键: → 或 L)">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><polygon points="5 4 17 12 5 20 5 4"></polygon></svg>
+              </button>
+
+              <div class="speed-slider-wrap">
+                <span class="speed-label">速度:</span>
+                <input type="range" id="speedSlider" min="50" max="1500" step="50" value="300">
+                <span id="speedValue" class="speed-value">300ms</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 时间轴进度指示条 (Timeline Scrub Bar) -->
+          <div class="timeline-bar" id="timelineBar">
+            <span class="step-text" id="stepCounter">第 0 / 0 步</span>
+            <input type="range" id="timelineSlider" class="timeline-slider" min="0" max="0" value="0">
+            <span class="action-tag" id="actionBadge">IDLE</span>
+          </div>
+
+          <!-- 多态动态可视化舞台画布 (Visualizer Stage) -->
+          <div class="stage-container" id="stageContainer">
+            <!-- 1. 数组/柱状图视图 (用于排序、二分、滑动窗口、单调栈/队列) -->
+            <div id="stageArray" class="stage-layer stage-array active"></div>
+
+            <!-- 2. SVG 矢量画布视图 (用于堆树、并查集森林、线段树、图论、拓扑、欧拉路) -->
+            <svg id="stageSvg" class="stage-layer stage-svg hidden" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet"></svg>
+
+            <!-- 3. 2D 网格与矩阵视图 (用于迷宫 BFS/DFS、DP 背包/石子合并表、素数筛网格) -->
+            <div id="stageGrid" class="stage-layer stage-grid hidden"></div>
+
+            <!-- 4. 专项交互沙盒视图 (用于 32位位运算、辗转相除平铺、Nim 异或仪表盘) -->
+            <div id="stageSandbox" class="stage-layer stage-sandbox hidden"></div>
+
+            <!-- 5. 堆排序专用同屏双重视角容器 (Heap Sort Dual View: 树形逻辑图 + 连续底层数组) -->
+            <div id="stageHeapDual" class="stage-layer heap-dual-stage hidden">
+              <div class="heap-tree-area">
+                <div class="heap-area-label">
+                  <span>🌲 逻辑结构：完全二叉大顶堆 (Complete Binary Tree)</span>
+                  <span class="heap-boundary-badge" id="heapTreeBadge">节点数: 0</span>
+                </div>
+                <svg id="heapTreeSvg" style="width:100%; height:calc(100% - 28px);" viewBox="0 0 800 280" preserveAspectRatio="xMidYMid meet"></svg>
+              </div>
+              <div class="heap-array-area">
+                <div class="heap-area-label">
+                  <span>📊 物理结构：底层顺序存储数组 (Sequential Array)</span>
+                  <span class="heap-boundary-badge" id="heapArrayBadge">有效堆 [0...end]</span>
+                </div>
+                <div id="heapArrayBars" style="display:flex; align-items:flex-end; justify-content:center; gap:6px; height:calc(100% - 28px); padding:4px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 单步大白话原理解析面板 (Pedagogical Step Narrative) -->
+          <div class="explanation-panel" id="explanationPanel">
+            <div class="explanation-header">
+              <span class="panel-icon">💡</span>
+              <span class="panel-title">单步执行逻辑与考点题眼解析</span>
+              <span class="invariant-badge" id="invariantBadge">循环不变量: 保证区间递增</span>
+            </div>
+            <p class="explanation-content" id="stepExplanationText">
+              就绪。请点击【▶ 播放】或【单步前进 ▶】开始观察算法的动态演进。
+            </p>
+          </div>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- 视图 2: 88 阶梯任务规划看板 (Task Ladder Dashboard)    -->
+        <!-- ==================================================== -->
+        <section class="view-panel hidden" id="viewDashboard" role="tabpanel" aria-labelledby="tabDashboard">
+          <div class="dashboard-banner">
+            <div class="banner-title-box">
+              <h2>蓝桥杯官方大纲 22 门类 88 阶梯通关打卡看板</h2>
+              <p>每个考点标配【算法理解打卡】+【简单母题】+【中等突破】+【困难综合题】4 级进阶，点击题目直达力扣 / 洛谷 / 蓝桥官方 OJ。数据本地实时自动持久化。</p>
+            </div>
+            <!-- 分组达成率进度环/卡片 -->
+            <div class="dashboard-stats-row">
+              <div class="stat-card">
+                <span class="stat-label">大学 C 组通关率</span>
+                <div class="stat-bar-wrap"><div class="stat-bar" id="barGroupC" style="width: 0%"></div></div>
+                <span class="stat-num" id="textGroupC">0 / 40 (0%)</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">大学 B 组省一核心</span>
+                <div class="stat-bar-wrap"><div class="stat-bar bar-b" id="barGroupB" style="width: 0%"></div></div>
+                <span class="stat-num" id="textGroupB">0 / 32 (0%)</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">大学 A 组高阶全景</span>
+                <div class="stat-bar-wrap"><div class="stat-bar bar-a" id="barGroupA" style="width: 0%"></div></div>
+                <span class="stat-num" id="textGroupA">0 / 16 (0%)</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">408 考研高频重合</span>
+                <div class="stat-bar-wrap"><div class="stat-bar bar-408" id="bar408" style="width: 0%"></div></div>
+                <span class="stat-num" id="text408">0 / 36 (0%)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 任务看板过滤器与操作工具栏 -->
+          <div class="dashboard-filter-bar">
+            <input type="text" id="dashboardSearchInput" class="form-input" placeholder="过滤任务题目或考点名称...">
+            <div class="filter-radio-group">
+              <label><input type="radio" name="dashFilter" value="all" checked> 全部 (88)</label>
+              <label><input type="radio" name="dashFilter" value="uncompleted"> 仅看未打卡</label>
+              <label><input type="radio" name="dashFilter" value="c"> C组签到</label>
+              <label><input type="radio" name="dashFilter" value="b"> B组核心</label>
+              <label><input type="radio" name="dashFilter" value="408"> 408考研</label>
+            </div>
+            <div class="dash-action-buttons">
+              <button id="btnOpenToolbox" class="btn btn-primary" title="打开蓝桥杯/保研/408考场必备资料箱">📦 备赛工具箱</button>
+              <button id="btnExportProgress" class="btn btn-secondary" title="导出做题打卡进度为 JSON 文件">📤 导出进度</button>
+              <button id="btnImportProgress" class="btn btn-secondary" title="导入本地 JSON 恢复打卡进度">📥 导入打卡</button>
+              <input type="file" id="importProgressFileInput" accept=".json" style="display:none;">
+              <button id="resetAllProgressBtn" class="btn btn-secondary" title="重置全部 88 题打卡进度">🔄 重置</button>
+            </div>
+          </div>
+
+          <div class="dashboard-cards-grid" id="dashboardCardsGrid">
+            <!-- 动态由 dashboard.js 填充 22 个门类 × 4 任务卡片 -->
+          </div>
+        </section>
+
+        <!-- ==================================================== -->
+        <!-- 视图 3: 五维深度知识库浏览器 (Knowledge Base - 单算法全景) -->
+        <!-- ==================================================== -->
+        <section class="view-panel hidden" id="viewKnowledge" role="tabpanel" aria-labelledby="tabKnowledge">
+          <div class="kb-layout" id="kbLayout">
+            <aside class="kb-algo-nav">
+              <div class="kb-nav-header">
+                <span>📚 算法索引抽屉</span>
+                <span style="font-size: 11px; color: var(--color-primary-hover);" id="kbAlgoCount">35+ 核心算法</span>
+              </div>
+              <div class="kb-algo-list" id="kbAlgoList">
+                <!-- 由 dashboard.js 动态填充具体算法索引 -->
+              </div>
+            </aside>
+
+            <!-- 知识库算法索引抽屉自由拖拽分隔条 (红框2: 支持 150px~360px 拖拽与双击一键折叠) -->
+            <div class="pane-resizer kb-resizer" id="resizerKbNav" title="左右拖拽调节索引抽屉宽度（双击一键折叠/展开）">
+              <button type="button" class="resizer-collapse-btn" id="btnCollapseKbNav" title="折叠/展开算法抽屉">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                  <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+              </button>
+            </div>
+
+            <article class="kb-detail-card" id="kbDetailCard">
+              <!-- 由 dashboard.js 动态渲染单个算法专属的五维卡片 -->
+            </article>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- 右侧代码联调面板自由拖拽分隔条 (红框3: 支持 320px~65vw 拖拽与双击切换 680px 宽屏) -->
+      <div class="pane-resizer" id="resizerInspector" title="左右拖拽调节代码面板宽度（双击切换宽屏看码）">
+        <button type="button" class="resizer-collapse-btn" id="btnCollapseInspector" title="折叠/展开右侧代码栏 (Ctrl+I)">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+            <line x1="15" y1="3" x2="15" y2="21"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- ====================================================== -->
+      <!-- 右侧代码与变量联调面板 (Right Inspector Panel)           -->
+      <!-- ====================================================== -->
+      <aside class="inspector-panel" id="inspectorPanel">
+        <!-- 选项卡切换头 -->
+        <div class="inspector-tabs" role="tablist">
+          <button class="insp-tab active" data-pane="codePane" role="tab" aria-selected="true">代码高亮</button>
+          <button class="insp-tab" data-pane="taskPane" role="tab" aria-selected="false">🎯 本题打卡</button>
+          <button class="insp-tab" data-pane="watchPane" role="tab" aria-selected="false">变量监视</button>
+          <button class="insp-tab" data-pane="stlPane" role="tab" aria-selected="false">408 / STL</button>
+        </div>
+
+        <!-- 窗格 1: 伪代码与算法模板 (带当前行同步高亮与注释切换) -->
+        <div class="inspector-pane active" id="codePane" role="tabpanel">
+          <div class="code-lang-selector">
+            <div class="lang-pills" id="codeLangPills">
+              <button class="pill active" data-lang="python">Python 3</button>
+              <button class="pill" data-lang="cpp">C++ 20 (408)</button>
+            </div>
+            <div class="comment-pills">
+              <button class="pill active" id="btnWrapCode" title="开启/关闭代码自动折行（无需左右滚动即可一次看完代码与注释）">↩️ 自动折行</button>
+              <button class="pill" id="btnExpandCode" title="一键加宽代码面板至 680px">↔️ 宽屏</button>
+              <button class="pill active" id="btnToggleComment" data-mode="annotated" title="点击切换：有注释教学版 / 无注释纯净版">💬 带注释版</button>
+              <button class="pill" id="btnCopyCode" title="一键复制当前源码到剪贴板">📋 复制源码</button>
+            </div>
+          </div>
+          <div class="code-scroll-box">
+            <pre class="code-pre" id="codePre"><code class="code-block" id="codeBlock"></code></pre>
+          </div>
+        </div>
+
+        <!-- 窗格 2: 当前算法专属题目与即时打卡 (Task Check-in Pane) -->
+        <div class="inspector-pane hidden" id="taskPane" role="tabpanel">
+          <div class="task-pane-wrap" id="currentAlgoTaskWrap">
+            <!-- 动态渲染当前算法的 4 级分任务、在线 OJ 直达链接与打卡复选框 -->
+          </div>
+        </div>
+
+        <!-- 窗格 3: 关键变量观察表 (Variable Watch) -->
+        <div class="inspector-pane hidden" id="watchPane" role="tabpanel">
+          <div class="watch-header">
+            <span>当前帧局部变量与状态监控</span>
+          </div>
+          <div class="watch-table-wrap">
+            <table class="watch-table">
+              <thead>
+                <tr>
+                  <th>变量名</th>
+                  <th>当前值</th>
+                  <th>物理意义</th>
+                </tr>
+              </thead>
+              <tbody id="watchTableBody">
+                <tr><td colspan="3" class="table-empty">暂无变量数据</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 窗格 4: 408 考研数据结构伪代码与 STL 速查 -->
+        <div class="inspector-pane hidden" id="stlPane" role="tabpanel">
+          <div class="stl-card-wrap" id="stlCardWrap">
+            <div class="stl-section-title">📘 408 数据结构与 STL 一行流</div>
+            <div class="stl-content" id="stlContent">
+              <!-- 动态注入当前算法的 408 考点点拨与 STL 调用速查 -->
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 模态弹窗: 考场 N 秒推候选算法计算器 (Modal)                -->
+    <!-- ======================================================== -->
+    <div class="modal-backdrop hidden" id="calculatorModal" role="dialog" aria-modal="true" aria-labelledby="calcModalTitle">
+      <div class="modal-dialog">
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--color-primary)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <h3 id="calcModalTitle">考场秒推候选算法计算器 (1.0s 时限法则)</h3>
+          </div>
+          <button class="btn-close-modal" id="closeCalcModalBtn" aria-label="关闭计算器">✕</button>
+        </header>
+
+        <div class="modal-body">
+          <p class="calc-desc">蓝桥杯与保研机试通用基准：评测机 1.0 秒内安全操作上限约为 <strong>10⁸ 次运算 (C++) / 1.5×10⁷ 次运算 (Python 3)</strong>。根据题目输入规模 N 瞬间反推可用算法：</p>
+
+          <div class="calc-ctrl-row">
+            <div class="calc-input-box">
+              <label for="calcInputN">输入数据规模 N：</label>
+              <div class="input-with-button">
+                <input type="text" id="calcInputN" class="form-input" placeholder="例如: 100000 或 1e5 或 2e5" value="200000">
+                <button id="btnRunCalc" class="btn btn-primary">立即推算</button>
+              </div>
+            </div>
+
+            <div class="calc-lang-box">
+              <label style="display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-secondary);">评测语言基准：</label>
+              <div class="calc-lang-toggle" id="calcLangToggle">
+                <button type="button" class="lang-btn active" data-lang="cpp" id="btnLangCpp">C++ (10⁸ ops/s)</button>
+                <button type="button" class="lang-btn" data-lang="python" id="btnLangPython">Python 3 (1.5×10⁷ ops/s)</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-quick-chips" id="calcPresetChips">
+            <span class="chips-label">典型考场规模:</span>
+            <button class="chip-n" data-val="10">N ≤ 10</button>
+            <button class="chip-n" data-val="20">N ≤ 20</button>
+            <button class="chip-n" data-val="500">N ≤ 500</button>
+            <button class="chip-n" data-val="5000">N ≤ 5000</button>
+            <button class="chip-n active" data-val="200000">N ≤ 2×10⁵</button>
+            <button class="chip-n" data-val="10000000">N ≤ 10⁷</button>
+            <button class="chip-n" data-val="1000000000000000000">N ≥ 10¹⁸</button>
+          </div>
+
+          <div class="calc-result-box" id="calcResultBox">
+            <div class="result-metric">
+              <span class="label">理论容许复杂度:</span>
+              <span class="val-highlight" id="resComplexity">O(N log N) (推荐上限)</span>
+            </div>
+            <div class="result-metric">
+              <span class="label">估算最高操作数:</span>
+              <span class="val-mono" id="resMaxOps">≈ 1 亿 (10⁸) ops (1.0s 时限)</span>
+            </div>
+
+            <!-- 9 阶 Big-O 理论耗时与可行性评测判定表 -->
+            <div class="calc-table-wrap" id="resTableWrap">
+              <table class="calc-table">
+                <thead>
+                  <tr>
+                    <th>复杂度阶</th>
+                    <th>理论运算次数 (ops)</th>
+                    <th>预估耗时</th>
+                    <th>评测判定</th>
+                  </tr>
+                </thead>
+                <tbody id="resTableBody">
+                  <!-- 由 calculator.js renderAnalysis 动态填充 -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 考场高频候选算法模型推荐 -->
+            <div class="result-candidates">
+              <div class="candidates-title">💡 考场高频候选算法模型推荐：</div>
+              <ul class="candidates-list" id="resCandidatesList">
+                <!-- 动态填充 -->
+              </ul>
+            </div>
+
+            <!-- 考场反模式避坑警示 -->
+            <div class="anti-pattern-box" id="resAntiPatternBox">
+              <span class="anti-icon">⚠️ 考场禁忌避坑：</span>
+              <span class="anti-text" id="resAntiPatternText"></span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button class="btn btn-secondary" id="closeCalcModalFooterBtn">返回工作台</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- 模态框: 蓝桥杯/保研机试/408考场必备资料箱 (.modal-dialog) -->
+    <div class="modal-backdrop hidden" id="toolboxModal" role="dialog" aria-modal="true" aria-labelledby="toolboxModalTitle">
+      <div class="modal-dialog toolbox-modal-dialog">
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">📦</span>
+            <h3 id="toolboxModalTitle">蓝桥杯 / 保研大厂机试 / 408 考研必备资料与考场工具箱</h3>
+          </div>
+          <button class="btn-close-modal" id="closeToolboxModalBtn" aria-label="关闭">&times;</button>
+        </header>
+
+        <div class="toolbox-tabs" id="toolboxTabs">
+          <button class="toolbox-tab-btn active" data-tab="template">🚀 考场黄金起手式 (快读/扩栈)</button>
+          <button class="toolbox-tab-btn" data-tab="duipai">🎯 20行自动化对拍器 (防挂Bug)</button>
+          <button class="toolbox-tab-btn" data-tab="mapping408">📘 蓝桥 × 机试 × 408 核心考点映射</button>
+        </div>
+
+        <div class="modal-body toolbox-modal-body">
+          <div class="toolbox-tab-content active" id="toolboxTabContent_template">
+            <div class="toolbox-content-bar">
+              <span class="toolbox-content-desc">Python 软件开发组高分起手式：集成了 <code>sys.stdin.readline</code> 快读、<code>sys.setrecursionlimit</code> 递归扩栈与 <code>@lru_cache</code> 记忆化骨架。</span>
+              <button class="btn btn-secondary btn-copy-toolbox" onclick="window.AlgoSystem.components.Dashboard.copyToolboxText('template')">📋 复制模版源码</button>
+            </div>
+            <pre class="code-pre toolbox-code-box"><code class="code-block" id="toolboxCode_template"></code></pre>
+          </div>
+
+          <div class="toolbox-tab-content hidden" id="toolboxTabContent_duipai">
+            <div class="toolbox-content-bar">
+              <span class="toolbox-content-desc">考场防挂分核武器：生成随机小数据，自动比对暴力标程与快速优化解，秒级拦截反例输入，彻底消灭隐藏边界 Bug。</span>
+              <button class="btn btn-secondary btn-copy-toolbox" onclick="window.AlgoSystem.components.Dashboard.copyToolboxText('duipai')">📋 复制对拍器源码</button>
+            </div>
+            <pre class="code-pre toolbox-code-box"><code class="code-block" id="toolboxCode_duipai"></code></pre>
+          </div>
+
+          <div class="toolbox-tab-content hidden" id="toolboxTabContent_mapping408">
+            <div class="toolbox-content-bar">
+              <span class="toolbox-content-desc">蓝桥杯 B 组、大厂算法面试与 408 计算机考研算法大题三维核心考点高频重合矩阵（重合度 > 85%）。</span>
+              <button class="btn btn-secondary btn-copy-toolbox" onclick="window.AlgoSystem.components.Dashboard.copyToolboxText('mapping408')">📋 复制 Markdown 全文</button>
+            </div>
+            <div class="toolbox-md-box" id="toolboxMd_mapping408"></div>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button class="btn btn-secondary" id="closeToolboxModalFooterBtn">返回工作台</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 模态弹窗: 界面主题与调色盘工作室 (Theme Palette Studio)       -->
+    <!-- ======================================================== -->
+    <div class="modal-backdrop hidden" id="themeModal" role="dialog" aria-modal="true" aria-labelledby="themeModalTitle">
+      <div class="modal-dialog theme-modal-dialog">
+        <header class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">🎨</span>
+            <h3 id="themeModalTitle">界面视觉主题与专属调色盘 (Theme Studio)</h3>
+          </div>
+          <button class="btn-close-modal" id="closeThemeModalBtn" aria-label="关闭">&times;</button>
+        </header>
+
+        <div class="theme-modal-body">
+          <p class="theme-modal-desc">系统内置 4 套精心校准的沉浸式主题风格，包含根据您样照 1:1 精准重现的 <strong>温润羊皮纸 (Default Light)</strong> 护眼方案：</p>
+
+          <div class="theme-cards-grid">
+            <!-- 羊皮纸暖光 (用户样照 1:1 精准重现) -->
+            <div class="theme-card" data-theme-id="warm-light-theme">
+              <div class="theme-card-header">
+                <div class="theme-card-title">
+                  <h4>温润羊皮纸 (Warm Light)</h4>
+                  <span class="theme-active-tag" style="display:none;">当前生效</span>
+                </div>
+                <span class="theme-preset-badge">Default Light</span>
+              </div>
+              <div class="theme-palette-table">
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Preset</span>
+                  <span class="palette-val">Default Light ↶</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Background</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#FAF4E5; border:1px solid #DCD0B6;"></span> #FAF4E5</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Foreground</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#435155;"></span> #435155</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Accent</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#CB4B16;"></span> #CB4B16</span>
+                </div>
+              </div>
+              <div class="theme-code-preview theme-preview-warm">
+                <pre class="theme-preview-pre"><code><span style="color:#708284; font-style:italic;">// Greet a user by name</span>
+<span style="color:#2aa198; font-weight:600;">const</span> <span style="color:#cb4b16; font-weight:600;">greet</span> = (<span style="color:#b58900;">name</span>: <span style="color:#d33682;">string</span>) =&gt; {
+  <span style="color:#2aa198; font-weight:600;">return</span> <span style="color:#859900;">`Hello, ${name}!`</span>;
+};</code></pre>
+              </div>
+              <button class="btn btn-primary btn-apply-theme" data-theme-id="warm-light-theme">立即应用此风格</button>
+            </div>
+
+            <!-- VS Code 暗黑 -->
+            <div class="theme-card" data-theme-id="dark-theme">
+              <div class="theme-card-header">
+                <div class="theme-card-title">
+                  <h4>VS Code 暗黑 (Dark)</h4>
+                  <span class="theme-active-tag" style="display:none;">当前生效</span>
+                </div>
+                <span class="theme-preset-badge">VS Code Dark+</span>
+              </div>
+              <div class="theme-palette-table">
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Preset</span>
+                  <span class="palette-val">Darcula Dark+</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Background</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#1E1E1E;"></span> #1E1E1E</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Foreground</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#D4D4D4;"></span> #D4D4D4</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Accent</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#007ACC;"></span> #007ACC</span>
+                </div>
+              </div>
+              <div class="theme-code-preview theme-preview-dark">
+                <pre class="theme-preview-pre"><code><span style="color:#6a9955; font-style:italic;">// Greet a user by name</span>
+<span style="color:#569cd6; font-weight:600;">const</span> <span style="color:#dcdcaa;">greet</span> = (<span style="color:#9cdcfe;">name</span>: <span style="color:#4ec9b0;">string</span>) =&gt; {
+  <span style="color:#c586c0; font-weight:600;">return</span> <span style="color:#ce9178;">`Hello, ${name}!`</span>;
+};</code></pre>
+              </div>
+              <button class="btn btn-primary btn-apply-theme" data-theme-id="dark-theme">立即应用此风格</button>
+            </div>
+
+            <!-- 科技赛博蓝 -->
+            <div class="theme-card" data-theme-id="cyber-blue-theme">
+              <div class="theme-card-header">
+                <div class="theme-card-title">
+                  <h4>科技赛博蓝 (Cyber Blue)</h4>
+                  <span class="theme-active-tag" style="display:none;">当前生效</span>
+                </div>
+                <span class="theme-preset-badge">Cyberpunk Blue</span>
+              </div>
+              <div class="theme-palette-table">
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Preset</span>
+                  <span class="palette-val">Cyberpunk Matrix</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Background</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#070D19;"></span> #070D19</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Foreground</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#F0F6FC;"></span> #F0F6FC</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Accent</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#0284C7;"></span> #0284C7</span>
+                </div>
+              </div>
+              <div class="theme-code-preview theme-preview-cyber">
+                <pre class="theme-preview-pre"><code><span style="color:#8ba2c4; font-style:italic;">// Greet a user by name</span>
+<span style="color:#38bdf8; font-weight:600;">const</span> <span style="color:#34d399;">greet</span> = (<span style="color:#f0f6fc;">name</span>: <span style="color:#a855f7;">string</span>) =&gt; {
+  <span style="color:#38bdf8; font-weight:600;">return</span> <span style="color:#f87171;">`Hello, ${name}!`</span>;
+};</code></pre>
+              </div>
+              <button class="btn btn-primary btn-apply-theme" data-theme-id="cyber-blue-theme">立即应用此风格</button>
+            </div>
+
+            <!-- 清新考场白 -->
+            <div class="theme-card" data-theme-id="light-theme">
+              <div class="theme-card-header">
+                <div class="theme-card-title">
+                  <h4>清新考场白 (Clean Light)</h4>
+                  <span class="theme-active-tag" style="display:none;">当前生效</span>
+                </div>
+                <span class="theme-preset-badge">Clean Exam White</span>
+              </div>
+              <div class="theme-palette-table">
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Preset</span>
+                  <span class="palette-val">Clean Light 01</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Background</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#F4F6F9; border:1px solid #CBD5E1;"></span> #F4F6F9</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Foreground</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#0F172A;"></span> #0F172A</span>
+                </div>
+                <div class="theme-palette-row">
+                  <span class="palette-prop">Accent</span>
+                  <span class="palette-val"><span class="color-swatch-box" style="background:#0284C7;"></span> #0284C7</span>
+                </div>
+              </div>
+              <div class="theme-code-preview theme-preview-light">
+                <pre class="theme-preview-pre"><code><span style="color:#008000; font-style:italic;">// Greet a user by name</span>
+<span style="color:#0000ff; font-weight:600;">const</span> <span style="color:#795e26;">greet</span> = (<span style="color:#0f172a;">name</span>: <span style="color:#267f99;">string</span>) =&gt; {
+  <span style="color:#0000ff; font-weight:600;">return</span> <span style="color:#a31515;">`Hello, ${name}!`</span>;
+};</code></pre>
+              </div>
+              <button class="btn btn-primary btn-apply-theme" data-theme-id="light-theme">立即应用此风格</button>
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-footer">
+          <button class="btn btn-secondary" id="closeThemeModalFooterBtn">关闭</button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- 悬浮通知气泡容器 (Toasts) -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- 严格脚本按序装载流水线 (<script defer> No-CORS)          -->
+  <!-- ======================================================== -->
+  <!-- 1. 核心底座与播放引擎 (Engine Layer) -->
+  <script defer src="js/engine/types.js"></script>
+  <script defer src="js/engine/storage.js"></script>
+  <script defer src="js/engine/controller.js"></script>
+
+  <!-- 2. UI 交互组件与辅助工具 (Component Layer) -->
+  <script defer src="js/components/calculator.js"></script>
+  <script defer src="js/components/controls.js"></script>
+  <script defer src="js/components/navigation.js"></script>
+  <script defer src="js/components/dashboard.js"></script>
+
+  <!-- 3. 六大分类算法可视化器 (Visualizer Layer - 35 算法) -->
+  <script defer src="js/visualizers/sorting.js"></script>
+  <script defer src="js/visualizers/search_strings.js"></script>
+  <script defer src="js/visualizers/data_structures.js"></script>
+  <script defer src="js/visualizers/graphs.js"></script>
+  <script defer src="js/visualizers/dp.js"></script>
+  <script defer src="js/visualizers/math_game.js"></script>
+
+  <!-- 4. 全局总装配与启动 -->
+  <!-- 内置纯原生启动脚本 (保证在后续模块就绪前也能即刻开箱交互) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 视图切换 Tabs
+      const viewTabs = document.getElementById('viewTabs');
+      if (viewTabs) {
+        viewTabs.addEventListener('click', function(e) {
+          const tabBtn = e.target.closest('.nav-tab');
+          if (tabBtn) {
+            const viewName = tabBtn.getAttribute('data-view');
+            const allTabs = viewTabs.querySelectorAll('.nav-tab');
+            allTabs.forEach(t => t.classList.remove('active'));
+            tabBtn.classList.add('active');
+
+            const panels = {
+              'visualizer': document.getElementById('viewVisualizer'),
+              'dashboard': document.getElementById('viewDashboard'),
+              'knowledge': document.getElementById('viewKnowledge')
+            };
+
+            Object.keys(panels).forEach(key => {
+              if (panels[key]) {
+                panels[key].classList.toggle('active', key === viewName);
+                panels[key].classList.toggle('hidden', key !== viewName);
+              }
+            });
+          }
+        });
+      }
+
+      // 右侧 Inspector 面板切换 Tabs
+      const inspectorTabs = document.querySelector('.inspector-tabs');
+      if (inspectorTabs) {
+        inspectorTabs.addEventListener('click', function(e) {
+          const tabBtn = e.target.closest('.insp-tab');
+          if (tabBtn) {
+            const paneId = tabBtn.getAttribute('data-pane');
+            const allTabs = inspectorTabs.querySelectorAll('.insp-tab');
+            allTabs.forEach(t => t.classList.remove('active'));
+            tabBtn.classList.add('active');
+
+            const allPanes = document.querySelectorAll('.inspector-pane');
+            allPanes.forEach(p => {
+              const isActive = (p.id === paneId);
+              p.classList.toggle('active', isActive);
+              p.classList.toggle('hidden', !isActive);
+            });
+          }
+        });
+      }
+
+      // 默认 Bubble Sort 演示发生器 (若 visualizer 尚未完全装配)
+      if (window.AlgoSystem) {
+        // 初始化计算器
+        if (window.AlgoSystem.calculator && typeof window.AlgoSystem.calculator.init === 'function') {
+          window.AlgoSystem.calculator.init();
+        }
+
+        // 创建全局播放控制器
+        if (!window.AlgoSystem.mainController && window.AlgoSystem.engine && window.AlgoSystem.engine.createController) {
+          window.AlgoSystem.mainController = window.AlgoSystem.engine.createController({ speed: 300 });
+        }
+
+        const controller = window.AlgoSystem.mainController;
+
+        // 初始化控制栏
+        if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.init === 'function') {
+          window.AlgoSystem.controls.init({
+            controller: controller,
+            onDataReload: function(newData) {
+              const current = window.AlgoSystem.navigation ? window.AlgoSystem.navigation.getCurrent() : null;
+              if (current && window.AlgoSystem.visualizers) {
+                const viz = window.AlgoSystem.visualizers.get(current.algoId);
+                if (viz && typeof viz.init === 'function') {
+                  viz.init(window.AlgoSystem.mainController, newData);
+                  return;
+                }
+              }
+              if (typeof window.AlgoSystem.runBubbleSortDemo === 'function') {
+                window.AlgoSystem.runBubbleSortDemo(newData);
+              }
+            }
+          });
+        }
+
+        // 初始化主题切换引擎
+        if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.initThemeSwitcher === 'function') {
+          window.AlgoSystem.controls.initThemeSwitcher();
+        }
+
+        // 初始化代码面板语言与注释切换器
+        if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.initCodeViewerControls === 'function') {
+          window.AlgoSystem.controls.initCodeViewerControls();
+        }
+
+        // 绑定顶部全局进度徽标点击：直达 88 任务通关看板
+        const globalProgressBtn = document.getElementById('globalProgressBtn');
+        if (globalProgressBtn) {
+          globalProgressBtn.addEventListener('click', function() {
+            const dashTab = document.querySelector('.nav-tab[data-view="dashboard"]');
+            if (dashTab) {
+              dashTab.click();
+              const dashView = document.getElementById('viewDashboard');
+              if (dashView) {
+                dashView.scrollIntoView({ behavior: 'smooth' });
+              }
+            }
+          });
+        }
+
+        // 算法切换代理器 (支持 M2 注册器委托与 M1 原型无缝过渡)
+        window.AlgoSystem.switchAlgorithmDemo = function(arg1, arg2, arg3) {
+          let info = null;
+          if (typeof arg1 === 'object' && arg1 !== null && arg1.algoId) {
+            info = arg1;
+          } else if (typeof arg1 === 'string') {
+            const cat = arg1;
+            const algoId = arg2;
+            const meta = arg3 || (window.AlgoSystem.navigation ? window.AlgoSystem.navigation.findAlgo(cat, algoId) : null);
+            info = { category: cat, algoId: algoId, meta: meta || { name: algoId, tier: '', tags: [] } };
+          }
+          if (!info || !info.meta) return;
+
+          // 1. 更新顶部舞台标题与分类标识
+          const stageTitle = document.getElementById('currentAlgoTitle');
+          if (stageTitle) {
+            stageTitle.textContent = `${info.meta.name} (${info.meta.tier})`;
+          }
+
+          // 2. 检查是否有注册的 Visualizer (M2 扩展规范)
+          const visualizers = window.AlgoSystem.visualizers;
+          let visualizer = null;
+          if (visualizers && typeof visualizers.get === 'function') {
+            visualizer = visualizers.get(info.algoId);
+          }
+
+          if (visualizer && typeof visualizer.init === 'function') {
+            visualizer.init(window.AlgoSystem.mainController);
+            if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.showToast === 'function') {
+              window.AlgoSystem.controls.showToast(`已加载 ${info.meta.name} 交互演进实验`, 'info');
+            }
+          } else if (info.algoId === 'bubble_sort') {
+            if (typeof window.AlgoSystem.runBubbleSortDemo === 'function') {
+              window.AlgoSystem.runBubbleSortDemo();
+            }
+          } else {
+            // M1 阶段提供友好的算法信息展示与过渡提示
+            const explanationText = document.getElementById('stepExplanationText');
+            if (explanationText) {
+              explanationText.innerHTML = `<strong>【${info.meta.name}】</strong>（${info.meta.tier}）：${info.meta.tags.join(' / ')}。<br>时空复杂度：时间 <code>${info.meta.time}</code>，空间 <code>${info.meta.space}</code>。<br><span style="color: var(--color-primary-hover);">该算法可视化交互演进实验将在里程碑 M2 全量装载，当前可在此进行数据规模推算与大纲打卡！</span>`;
+            }
+            if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.showToast === 'function') {
+              window.AlgoSystem.controls.showToast(`已切换至: ${info.meta.name} (${info.meta.tier})`, 'info');
+            }
+          }
+
+          // 3. 同步更新代码高亮与当前算法打卡列表
+          if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.renderCurrentCode === 'function') {
+            window.AlgoSystem.controls.renderCurrentCode(info.algoId);
+          }
+          if (window.AlgoSystem.dashboard && typeof window.AlgoSystem.dashboard.renderCurrentAlgoTasks === 'function') {
+            window.AlgoSystem.dashboard.renderCurrentAlgoTasks(info.algoId);
+          }
+        };
+
+        window.AlgoSystem.switchAlgorithm = window.AlgoSystem.switchAlgorithmDemo;
+
+        window.AlgoSystem.reloadCurrentVisualizer = function(newData) {
+          const current = window.AlgoSystem.navigation ? window.AlgoSystem.navigation.getCurrent() : null;
+          if (current && window.AlgoSystem.visualizers) {
+            const viz = window.AlgoSystem.visualizers.get(current.algoId);
+            if (viz && typeof viz.init === 'function') {
+              viz.init(window.AlgoSystem.mainController, newData);
+            }
+          }
+        };
+
+        // 初始化导航
+        if (window.AlgoSystem.navigation && typeof window.AlgoSystem.navigation.init === 'function') {
+          window.AlgoSystem.navigation.init({
+            onSelect: function(info) {
+              if (typeof window.AlgoSystem.switchAlgorithmDemo === 'function') {
+                window.AlgoSystem.switchAlgorithmDemo(info);
+              }
+            }
+          });
+        }
+
+        // 默认冒泡排序演示生成器 (确保 index.html 双击立即有动态演进效果)
+        window.AlgoSystem.generateBubbleSortFrames = function(arr) {
+          const ActionTypes = window.AlgoSystem.ActionTypes;
+          const SnapshotFrame = window.AlgoSystem.SnapshotFrame;
+          const a = [...arr];
+          const n = a.length;
+          const frames = [];
+          let step = 0;
+
+          // 第 0 步
+          frames.push(new SnapshotFrame({
+            step: step++,
+            action: ActionTypes.HIGHLIGHT,
+            indices: [],
+            state: [...a],
+            variables: { i: 0, j: 0, n: n },
+            codeLine: 1,
+            explanation: `初始状态待排序序列: [${a.join(', ')}]，总长度 N = ${n}。`
+          }));
+
+          for (let i = 0; i < n - 1; i++) {
+            let swapped = false;
+            for (let j = 0; j < n - 1 - i; j++) {
+              // 比较
+              frames.push(new SnapshotFrame({
+                step: step++,
+                action: ActionTypes.COMPARE,
+                indices: [j, j + 1],
+                state: [...a],
+                variables: { i, j, 'a[j]': a[j], 'a[j+1]': a[j + 1] },
+                codeLine: 4,
+                explanation: `比较相邻元素 a[${j}]=${a[j]} 与 a[${j+1}]=${a[j+1]}。`
+              }));
+
+              if (a[j] > a[j + 1]) {
+                const temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+                swapped = true;
+
+                // 交换
+                frames.push(new SnapshotFrame({
+                  step: step++,
+                  action: ActionTypes.SWAP,
+                  indices: [j, j + 1],
+                  state: [...a],
+                  variables: { i, j, 'a[j]': a[j], 'a[j+1]': a[j + 1] },
+                  codeLine: 5,
+                  explanation: `发现逆序对 a[${j}] > a[${j+1}]，执行元素交换。`
+                }));
+              }
+            }
+
+            // 标定当前轮次已就位元素
+            frames.push(new SnapshotFrame({
+              step: step++,
+              action: ActionTypes.MARK_SORTED,
+              indices: [n - 1 - i],
+              state: [...a],
+              variables: { i, 'sortedIndex': n - 1 - i },
+              codeLine: 2,
+              explanation: `第 ${i+1} 轮扫描结束，当前最大元素 ${a[n-1-i]} 已沉底就位。`
+            }));
+
+            if (!swapped) break;
+          }
+
+          // 完成帧
+          frames.push(new SnapshotFrame({
+            step: step++,
+            action: ActionTypes.DONE,
+            indices: a.map((_, idx) => idx),
+            state: [...a],
+            variables: { status: 'COMPLETE' },
+            codeLine: 7,
+            explanation: `冒泡排序全部执行完毕，全序列已呈单调非递减有序！`
+          }));
+
+          return frames;
+        };
+
+        // 舞台图元渲染器
+        window.AlgoSystem.renderArrayStage = function(frame) {
+          const stageArray = document.getElementById('stageArray');
+          const explanationText = document.getElementById('stepExplanationText');
+          const watchBody = document.getElementById('watchTableBody');
+          const codeBlock = document.getElementById('codeBlock');
+
+          if (!stageArray || !frame) return;
+
+          const arr = Array.isArray(frame.state) ? frame.state : [];
+          const maxVal = Math.max(...arr, 1);
+
+          stageArray.innerHTML = arr.map((val, idx) => {
+            let stateClass = '';
+            if (frame.action === 'COMPARE' && frame.indices.includes(idx)) {
+              stateClass = 'bar-compare';
+            } else if (frame.action === 'SWAP' && frame.indices.includes(idx)) {
+              stateClass = 'bar-modify';
+            } else if (frame.action === 'MARK_SORTED' && frame.indices.includes(idx)) {
+              stateClass = 'bar-sorted';
+            } else if (frame.action === 'DONE') {
+              stateClass = 'bar-sorted';
+            }
+
+            const heightPct = Math.max(12, Math.round((val / maxVal) * 82));
+            return `
+              <div class="bar-item ${stateClass}" style="height: ${heightPct}%;">
+                <span class="bar-val">${val}</span>
+                <span class="bar-idx">${idx}</span>
+              </div>
+            `;
+          }).join('');
+
+          if (explanationText && frame.explanation) {
+            explanationText.textContent = frame.explanation;
+          }
+
+          // 变量监视表
+          if (watchBody && frame.variables) {
+            const rows = Object.keys(frame.variables).map(k => `
+              <tr>
+                <td>${k}</td>
+                <td>${frame.variables[k]}</td>
+                <td>局部指针/状态</td>
+              </tr>
+            `).join('');
+            watchBody.innerHTML = rows || '<tr><td colspan="3" class="table-empty">暂无变量数据</td></tr>';
+          }
+
+          // 代码高亮
+          if (codeBlock) {
+            const lines = codeBlock.querySelectorAll('.code-line');
+            lines.forEach((line, i) => {
+              line.classList.toggle('line-highlight', (i + 1 === frame.codeLine));
+            });
+          }
+        };
+
+        window.AlgoSystem.runBubbleSortDemo = function(arr) {
+          const codeBlock = document.getElementById('codeBlock');
+          if (codeBlock) {
+            const pythonTemplate = [
+              'def bubble_sort(arr):',
+              '    n = len(arr)',
+              '    for i in range(n - 1):',
+              '        for j in range(n - 1 - i):',
+              '            if arr[j] > arr[j + 1]:',
+              '                arr[j], arr[j + 1] = arr[j + 1], arr[j]',
+              '    return arr'
+            ];
+            codeBlock.innerHTML = pythonTemplate.map((line, idx) => `<div class="code-line" data-line="${idx + 1}"><span class="line-num">${idx + 1}</span><span class="line-code">${line}</span></div>`).join('');
+          }
+
+          const frames = window.AlgoSystem.generateBubbleSortFrames(arr || [45, 12, 85, 32, 89]);
+          controller.loadFrames(frames);
+          if (typeof controller.setRenderer === 'function') {
+            controller.setRenderer(function(p) {
+              window.AlgoSystem.renderArrayStage(p.frame);
+            });
+          } else {
+            controller.on('frameChange', function(p) {
+              window.AlgoSystem.renderArrayStage(p.frame);
+            });
+          }
+          window.AlgoSystem.renderArrayStage(controller.getCurrentFrame());
+        };
+
+        // 默认装载冒泡演示
+        const bubbleViz = window.AlgoSystem.visualizers ? window.AlgoSystem.visualizers.get('bubble_sort') : null;
+        if (bubbleViz && typeof bubbleViz.init === 'function') {
+          bubbleViz.init(controller);
+        } else if (typeof window.AlgoSystem.runBubbleSortDemo === 'function') {
+          window.AlgoSystem.runBubbleSortDemo([45, 12, 85, 32, 89]);
+        }
+
+        // 默认呈现初始算法的代码高亮与专属打卡任务
+        if (window.AlgoSystem.controls && typeof window.AlgoSystem.controls.renderCurrentCode === 'function') {
+          window.AlgoSystem.controls.renderCurrentCode('bubble_sort');
+        }
+        if (window.AlgoSystem.dashboard && typeof window.AlgoSystem.dashboard.renderCurrentAlgoTasks === 'function') {
+          window.AlgoSystem.dashboard.renderCurrentAlgoTasks('bubble_sort');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
